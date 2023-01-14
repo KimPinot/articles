@@ -2,7 +2,7 @@
 title: 블로그_최종_수정_최종_진짜최종.blog
 date: 2023-1-12 20:45:11
 comment: false
-list: false
+hidden: true
 ---
 
 # 누구세요?
