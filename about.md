@@ -28,7 +28,7 @@ hidden: true
 
 ## TO-DO
 
-- [ ] Youtube, Twitter, Github Gist, Codepen embed 하기
+- [x] Youtube, Twitter, Github Gist, Codepen embed 하기
 - [ ] Note 기능 추가하기
 - [ ] 카테고리, 태그 기능 추가하기
 - [ ] 검색 기능 추가하기

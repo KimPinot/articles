@@ -4,7 +4,7 @@ description: Hexo 기반의 블로그에서 NextJS SSG를 사용하여 블로그
 date: 2022-08-22 13:31:06
 tags: [blog]
 categories:
-- 회고록
+  - 회고록
 ---
 
 안녕하세요. 블로그를 또 만드는 개발자 나비입니다.
@@ -12,15 +12,15 @@ categories:
 
 # TL;DR
 
-* 하지 마세요
-* 정말 할꺼라면 Gatsby 쓰세요
-* 사실 Hexo가 가장 좋아요
+- 하지 마세요
+- 정말 할꺼라면 Gatsby 쓰세요
+- 사실 Hexo가 가장 좋아요
 
 # 사건의 발단
 
 이력서 페이지를 만들면서 생긴 일이였습니다.
 
-![이력서 페이지](/move-to-new-blog/1.png)
+![이력서 페이지](move-to-new-blog/1.png)
 
 기록하지는 않았지만, 이 페이지에서 전체 이력 보기 버튼을 만들면서 크게 고생을 했었는데요.
 마크다운에서는 기본적으로 HTML 기능을 지원하지 않기 때문에...
@@ -38,28 +38,28 @@ categories:
 
 블로그를 옮기면서, 나름대로 작은 조건들을 걸어두었습니다.
 
-* 개발을 하더라도 최소한으로 해야한다
-* 마크다운을 지원해야한다. MDX를 지원하면 베스트
-* 포스트를 만들고 관리하는데에 귀찮지 않아야 한다
-* **디자인이 이뻐야 한다**
+- 개발을 하더라도 최소한으로 해야한다
+- 마크다운을 지원해야한다. MDX를 지원하면 베스트
+- 포스트를 만들고 관리하는데에 귀찮지 않아야 한다
+- **디자인이 이뻐야 한다**
 
 그래서 나오게 된 후보군이 이렇게 있었습니다.
 
-| 플랫폼 이름 | 장점 | 단점 |
-|----------|-----|-----|
-| Gatsby   | - 개발이 빠르다 <br /> - 플러그인이 많다 <br /> - 문제가 생겼을때 해결할 수 있는 문서가 많다 | - 내가 모르는 부분에 대부분의 로직을 기대야 한다 <br /> - 파일의 구조가 복잡하다 (= 포스트를 만들고 관리하는데 귀찮아진다) |
-| Hexo     | - 이쁜 테마가 많다 <br /> - 포스트 관리가 간편하다 | - MDX를 지원 하지 않는다 <br /> - 여기에 실증이 났었다 <br /> - jQuery를 아직도 쓴다 |
-| Velog    | - 개발을 하지 않아도 된다 <br /> - 좋은 글들이 많이 있다 | - 커스텀이 하나도 안된다 |
-| 티스토리   | - 개발을 하지 않아도 된다 <br /> - 웹에디팅을 지원한다   | - 코드 지원의 상태가 좋지 않다 |
-| 직접 만든다 | - 내가 모든 로직을 만들 수 있다 | - 모든 로직을 내가 만들어야 한다 |
+| 플랫폼 이름 | 장점                                                                                         | 단점                                                                                                                       |
+| ----------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Gatsby      | - 개발이 빠르다 <br /> - 플러그인이 많다 <br /> - 문제가 생겼을때 해결할 수 있는 문서가 많다 | - 내가 모르는 부분에 대부분의 로직을 기대야 한다 <br /> - 파일의 구조가 복잡하다 (= 포스트를 만들고 관리하는데 귀찮아진다) |
+| Hexo        | - 이쁜 테마가 많다 <br /> - 포스트 관리가 간편하다                                           | - MDX를 지원 하지 않는다 <br /> - 여기에 실증이 났었다 <br /> - jQuery를 아직도 쓴다                                       |
+| Velog       | - 개발을 하지 않아도 된다 <br /> - 좋은 글들이 많이 있다                                     | - 커스텀이 하나도 안된다                                                                                                   |
+| 티스토리    | - 개발을 하지 않아도 된다 <br /> - 웹에디팅을 지원한다                                       | - 코드 지원의 상태가 좋지 않다                                                                                             |
+| 직접 만든다 | - 내가 모든 로직을 만들 수 있다                                                              | - 모든 로직을 내가 만들어야 한다                                                                                           |
 
 결과적으로는, **직접 만든다** 를 선택하게 되었는데요. 그 이유는...
 
-* 블로그 디자인을 해보고 싶었다.
-* Gatsby도 좋지만, 파일 구조가 복잡했다.
-* Velog, 티스토리도 좋지만 커스텀 자체가 불가능하거나 어려웠다.
-* MDX 지원하는 블로그가 없다
-* 함수형 프로그래밍으로 블로그 만들어보고 싶었다
+- 블로그 디자인을 해보고 싶었다.
+- Gatsby도 좋지만, 파일 구조가 복잡했다.
+- Velog, 티스토리도 좋지만 커스텀 자체가 불가능하거나 어려웠다.
+- MDX 지원하는 블로그가 없다
+- 함수형 프로그래밍으로 블로그 만들어보고 싶었다
 
 # #가보자고
 
@@ -90,16 +90,17 @@ const getFilenames = async () =>
     // Junk (.DS_Store 같은거) 파일을 제외한다
     A.filter(isNotJunk),
     // .md 또는 .mdx 확장을 지운다
-    A.map(deleteMdFileExtension),
+    A.map(deleteMdFileExtension)
   );
 
-export const getPosts = async () => F.pipe(
-  await getFilenames(),
-  // 메타데이터를 가져온다
-  A.map(getMetadata),
-  // promise를 모두 실행시킨다
-  promiseAll
-);
+export const getPosts = async () =>
+  F.pipe(
+    await getFilenames(),
+    // 메타데이터를 가져온다
+    A.map(getMetadata),
+    // promise를 모두 실행시킨다
+    promiseAll
+  );
 ```
 
 빌드 과정에서 SSG를 통해 static file로 만들어지기 때문에 파일을 가져오거나, 렌더링 하는 부분에서의 최적화는 신경쓰지 않았습니다.
@@ -140,7 +141,9 @@ Please only return JSON serializable data types.
 import * as F from "fp-ts/function";
 import { joinObject, pick } from "modules/utils/object";
 
-export async function getMetadata(filename: string): Promise<MetaDataWithFilename> {
+export async function getMetadata(
+  filename: string
+): Promise<MetaDataWithFilename> {
   const { date, ...rest } = F.pipe(
     await filenameToRender(filename),
     pick("frontmatter"),
@@ -162,7 +165,7 @@ export async function getMetadata(filename: string): Promise<MetaDataWithFilenam
 이 글의 작성일자는 `2022년 08월 22일 13시 31분 06초` 인데요.
 하지만, 현재 블로그에는 이렇게 값이 표시되고 있습니다.
 
-![작성일시가 2022년 8월 22일 10시 31분 6초로 표시되는 모습](/move-to-new-blog/2.png)
+![작성일시가 2022년 8월 22일 10시 31분 6초로 표시되는 모습](move-to-new-blog/2.png)
 
 잠시만요. 9시간?
 
@@ -184,7 +187,7 @@ export function dateWithoutTimezone(date: number) {
 
 # 결과
 
-![완성된 블로그의 모습](/move-to-new-blog/3.png)
+![완성된 블로그의 모습](move-to-new-blog/3.png)
 
 결과적으로는, 뭐 잘 된거 같습니다.
 아직 실 서비스에서 적용하기에는 조금 애매한 것들 (CV 페이지의 부재, 카테고리나 태그가 없음) 이 많아서...
