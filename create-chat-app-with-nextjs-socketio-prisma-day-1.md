@@ -3,19 +3,16 @@ title: Socket.io로 채팅 서비스 만들어보기 (1) - 기획 / 채팅기능
 date: 2022-02-27 00:08:17
 tags:
 categories:
-- 만들기
-- Socket.io로 채팅 서비스 만들어보기
+  - 만들기
+  - Socket.io로 채팅 서비스 만들어보기
+hidden: true
 ---
-
-
 
 # 계기
 
 채팅을 사용하는 새로운 토이프로젝트를 만들기 위해서 socket.io를 활용한 NextJS 어플리케이션 예제를 만들어보기로 했습니다.
 
 근데 하는김에 '개발을 하면서 겪은 이야기들을 글로 써보면 어떨까?' 싶어서 이렇게 글로도 남겨보고자 합니다.
-
-
 
 # 목표
 
@@ -35,8 +32,6 @@ categories:
 ### 기타 기능
 
 - [ ] 유저 목록을 확인해서 채팅을 생성할 수 있음
-
-
 
 # 오늘의 목표 : socket.io 기반의 1:1 채팅을 만들기
 
@@ -62,8 +57,6 @@ yarn tailwindcss init -p
 yarn prisma init
 ```
 
-
-
 ## 타입 정의
 
 우선 NextApiResponse에 SocketIO 객체를 포함한 `NextApiResponseServerIO` 타입을 만듭니다.
@@ -75,16 +68,13 @@ import { Socket, Server as NetServer } from "net";
 import { Server as SocketIOServer } from "socket.io";
 
 export type NextApiResponseServerIO = NextApiResponse & {
-	socket: Socket & {
-		server: NetServer & {
-			io: SocketIOServer;
-		};
-	};
+  socket: Socket & {
+    server: NetServer & {
+      io: SocketIOServer;
+    };
+  };
 };
-
 ```
-
-
 
 ## socket.io 서버 만들기
 
@@ -98,25 +88,23 @@ import { Server as NetServer } from "http";
 
 // custom config for disable bodyParser (https://nextjs.org/docs/api-routes/api-middlewares#custom-config)
 export const config = {
-	api: {
-		bodyParser: false,
-	},
+  api: {
+    bodyParser: false,
+  },
 };
 
 export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
-	if (!res.socket.server.io) {
-		console.log("create new socket.io server");
-		// adapt Next net server to http server
-		const httpServer: NetServer = res.socket.server as any;
-		res.socket.server.io = new ServerIO(httpServer, {
-			path: "/api/socket.io",
-		});
-	}
-	res.end();
+  if (!res.socket.server.io) {
+    console.log("create new socket.io server");
+    // adapt Next net server to http server
+    const httpServer: NetServer = res.socket.server as any;
+    res.socket.server.io = new ServerIO(httpServer, {
+      path: "/api/socket.io",
+    });
+  }
+  res.end();
 };
 ```
-
-
 
 ## socket.io 연결하기
 
@@ -153,21 +141,15 @@ export default Home;
 
 ```
 
-
-
 어라? 요청이 API 경로인 `/api/socket.io` 가 아니라 페이지 경로인 `/socket.io` 로 연결되고 있습니다.
 
 ![http://localhost:3000/socket.io 로 요청을 보내는 모습, 나는 이게 아니라 /api/socket.io에 연결될거라고 예상했는데...?](create-chat-app-with-nextjs-socketio-prisma-day-1/what.png)
-
-
 
 [공식 문서](https://socket.io/docs/v4/client-options/#path) 를 살펴봅니다.
 
 살펴보니 socket.io 를 init 할 때 path 라는 환경변수가 지정되어있지 않다면 기본값으로 `/socket.io` 로 설정된다고 합니다.
 
 ![socket.io 공식 문서에 적힌 내용, path 값을 설정해주면 socket.io 서버에 연결하는 경로를 바꿀 수 있다고 적혀있다.](create-chat-app-with-nextjs-socketio-prisma-day-1/ah-ha.png)
-
-
 
 `io()`를 호출할 때 옵션 object에 path 값을 설정해봅니다.
 
@@ -177,13 +159,9 @@ const socket = io("", {
 });
 ```
 
-
-
 연결이 잘 됩니다! 만세!
 
 ![성공적으로 socket.io 서버에 연결된 모습](create-chat-app-with-nextjs-socketio-prisma-day-1/good.png)
-
-
 
 ## 기본적인 마크업 작성하기
 
@@ -201,8 +179,8 @@ interface IMsg {
 
 `chat` 에는 지금까지 사용자가 보낸 채팅이 담깁니다.
 
-* 만약 `chat`의 길이가 0이라면 (채팅을 보내고 받은 기록이 없다면) ''채팅 기록이 없습니다'' 라는 컨텐츠를 표시합니다.
-* 만약 해당 채팅을 보낸 사람의 이름이 나와 같다면 (내가 보낸 채팅이라면) 사용자의 이름 대신 Me 를 출력합니다.
+- 만약 `chat`의 길이가 0이라면 (채팅을 보내고 받은 기록이 없다면) ''채팅 기록이 없습니다'' 라는 컨텐츠를 표시합니다.
+- 만약 해당 채팅을 보낸 사람의 이름이 나와 같다면 (내가 보낸 채팅이라면) 사용자의 이름 대신 Me 를 출력합니다.
 
 ```jsx
 const user = "User_" + String(~~(Math.random() * 1000000));
@@ -316,11 +294,7 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 }
 ```
 
-
-
-<video src="create-chat-app-with-nextjs-socketio-prisma-day-1/it_works!.mov" controls  style={{ width: "100%" }}></video>
-
-
+<video src="create-chat-app-with-nextjs-socketio-prisma-day-1/it_works!.mov" controls style={{ width: "100%" }}></video>
 
 이걸 쓰고 잠시 잠을 자야겠습니다...
 

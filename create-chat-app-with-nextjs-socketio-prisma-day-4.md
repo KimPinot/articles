@@ -4,11 +4,10 @@ description: NextJS와 socket.io를 사용해서 로그인이 가능한 채팅 �
 date: 2022-03-05 00:25:23
 tags:
 categories:
-- 만들기
-- Socket.io로 채팅 서비스 만들어보기
+  - 만들기
+  - Socket.io로 채팅 서비스 만들어보기
+hidden: true
 ---
-
-
 
 # 지난 시간 돌아보기 + 목표 설정하기
 
@@ -24,9 +23,9 @@ categories:
 
 지금 우리의 어플리케이션은 이런 문제를 가지고 있었습니다.
 
-* 로그인을 한 상태로 새로고침을 하면 다시 로그인을 해야함
-* 내가 접속한 채팅방에 다시 접속하려면 채팅방 ID를 기억해야 함
-* 초대 기능이 없어서 다른 사람이랑 채팅을 하려면 그 사람이 채팅방에 초대되어야 함
+- 로그인을 한 상태로 새로고침을 하면 다시 로그인을 해야함
+- 내가 접속한 채팅방에 다시 접속하려면 채팅방 ID를 기억해야 함
+- 초대 기능이 없어서 다른 사람이랑 채팅을 하려면 그 사람이 채팅방에 초대되어야 함
 
 ## 진행사항
 
@@ -47,8 +46,6 @@ categories:
 
 - [ ] 유저 목록을 확인해서 채팅을 생성할 수 있음
 
-
-
 # 새로고침을 해도 세션을 유지시키는 기능 만들기
 
 <video controls src="create-chat-app-with-nextjs-socketio-prisma-day-4/refresh_and_what.mov" style={{ width: "100%" }}></video>
@@ -58,8 +55,6 @@ categories:
 기존의 세션은 userContext 의 `userId` hooks에 저장되었습니다. 그렇다보니 새로고침 = 모든 변경점이 사라짐 이라는 웹의 특성에 의해서 사라졌는데요.
 이 `userId` 를 로그인할 때 쿠키에 저장함으로써 새로고침을 해도 유저 정보가 사라지지 않도록 만들어보겠습니다.
 
-
-
 ## [cookies-next](https://www.npmjs.com/package/cookies-next) 라이브러리 추가하기
 
 nextjs에서 쿠키를 조금 더 쉽게 다룰 수 있도록 도와주는 cookies-next 라이브러리를 추가합니다.
@@ -67,8 +62,6 @@ nextjs에서 쿠키를 조금 더 쉽게 다룰 수 있도록 도와주는 cooki
 ```bash
 $ yarn add cookies-next
 ```
-
-
 
 ## `POST /user/login` 수정하기
 
@@ -92,20 +85,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 };
 ```
 
-
-
 API에 요청을 하면... Set-Cookie 헤더가 잘 들어가 있는 모습을 볼 수 있습니다.
 
 ![로그인 API에 요청을 보낸 모습. 정상적으로 Set-Cookie 헤더가 들어가있다.](create-chat-app-with-nextjs-socketio-prisma-day-4/cookie_works.png)
 
+## 새로고침을 했을 때 쿠키가 있다면 Context의 `userId` 값을 업데이트 하기
 
+- UserContextProvider가 마운트 되었을 때 (페이지가 로드 되었을 때)
 
-## 새로고침을 했을 때 쿠키가 있다면 Context의  `userId` 값을 업데이트 하기
-
-* UserContextProvider가 마운트 되었을 때 (페이지가 로드 되었을 때)
-
-* Context 내부에 `userId`값이 없고
-* 쿠키에 `userId` 에 대한 값이 있다면
+- Context 내부에 `userId`값이 없고
+- 쿠키에 `userId` 에 대한 값이 있다면
 
 `userId` 값을 업데이트 하는 기능을 추가했습니다.
 
@@ -136,13 +125,9 @@ const UserContextProvider: FC = ({ children }) => {
 export default UserContextProvider;
 ```
 
-
-
 이제 새로고침을 해도 유저 정보가 사라지지 않습니다 (만세!)
 
 <video src="create-chat-app-with-nextjs-socketio-prisma-day-4/refresh_and_work.mov" controls width="100%;"></video>
-
-
 
 또 로그아웃을 할 때 `userId` 쿠키를 삭제하는 기능도 추가했습니다.
 
@@ -156,22 +141,18 @@ const UserContextProvider: FC = ({ children }) => {
     removeCookies("userId");
     // ...
   }
-  
+
   // ...
 };
 
 export default UserContextProvider;
 ```
 
-
-
 # 내가 접속한 채팅방 목록을 표시하기
 
 이 문제는 생각보다 간단하게 해결할 수 있어보입니다.
 
 사용자의 `userId` 를 받으면 해당 `userId`가 속해있는 Room을 데이터베이스에서 찾아서 반환하기만 하면 되기 때문이죠.
-
-
 
 ## `GET /room` 만들기
 
@@ -196,18 +177,14 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 
     return res.status(200).json(response);
   }
-  
+
   // ...
 };
 ```
 
-
-
 ![API를 호출한 모습, 생각보다 멀쩡히 잘 동작한다.](create-chat-app-with-nextjs-socketio-prisma-day-4/rooms_work.png)
 
 API를 호출하면 정상적으로 해당 사용자가 접속한 채팅방이 반환됩니다.
-
-
 
 ## 다른 사용자가 채팅방에 접속해도 데이터베이스에 반영되지 않는 문제 해결하기
 
@@ -221,7 +198,7 @@ API를 호출하면 정상적으로 해당 사용자가 접속한 채팅방이 �
 
 ### 백엔드에 유저가 방에 있는지 확인하는 로직 추가하기
 
-그래서 채팅방에 접속할 때  `usersOnRoom` 에 `room_id` 와 `user_id` 값이 있는지(방에 접속한 적이 있는지) 확인한 다음, 만약 없다면 방에 추가해주는 기능을 작업했습니다.
+그래서 채팅방에 접속할 때 `usersOnRoom` 에 `room_id` 와 `user_id` 값이 있는지(방에 접속한 적이 있는지) 확인한 다음, 만약 없다면 방에 추가해주는 기능을 작업했습니다.
 
 ```typescript
 // ...
@@ -254,21 +231,15 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 };
 ```
 
-
-
 이제 API 요청을 보내면...
 
 ```bash
 $ curl "http://localhost:3000/api/room/{room_id}?user_id={user_id}"
 ```
 
-
-
 성공적으로 방에 추가가 된 것을 확인할 수 있습니다.
 
 ![성공적으로 joined_rooms에 유저가 추가가 된 모습을 확인할 수 있다.](create-chat-app-with-nextjs-socketio-prisma-day-4/users_on_room_works.png)
-
-
 
 ### 바뀐 API 스펙에 대응하기
 
@@ -288,7 +259,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async (ctx) => {
   await fetch(`http://localhost:3000/api/room/${room_id}?user_id=${userId}`, {
     method: "GET",
   });
-  
+
   // ...
 
   return {
@@ -300,8 +271,6 @@ export const getServerSideProps: GetServerSideProps<IProps> = async (ctx) => {
 };
 ```
 
-
-
 ## `Room` 타입 추가하기
 
 ```typescript
@@ -311,8 +280,6 @@ export type Room = {
   createdAt: string;
 };
 ```
-
-
 
 ## 프론트엔드에 연결하기
 
@@ -324,9 +291,12 @@ export type Room = {
 import { Room } from "types/rooms";
 
 async function getMyRooms(user_id: string) {
-  const response = await fetch(`http://localhost:3000/api/room?user_id=${user_id}`, {
-    method: "GET",
-  });
+  const response = await fetch(
+    `http://localhost:3000/api/room?user_id=${user_id}`,
+    {
+      method: "GET",
+    }
+  );
   return await response.json();
 }
 
@@ -344,7 +314,9 @@ const Home: NextPage = () => {
   return (
     <>
       {/* ... */}
-      <main className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}>
+      <main
+        className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}
+      >
         {/* ... */}
         <div className={"flex flex-col gap-y-2"}>
           <h1 className={"text-xl"}>내가 접속한 채팅방</h1>
@@ -366,13 +338,9 @@ const Home: NextPage = () => {
 export default Home;
 ```
 
-
-
 ![내가 접속한 채팅방의 목록이 정상적으로 표시되는 모습](create-chat-app-with-nextjs-socketio-prisma-day-4/it_works_room.png)
 
 정상적으로 작동하는 것을 확인할 수 있습니다.
-
-
 
 # 회고와 예고
 
@@ -382,9 +350,9 @@ export default Home;
 
 다음화에는 아마 이런 기능들을 할 것 같습니다.
 
-* 클라이언트 socket 클라이언트를 Context로 분리하기
-* [socket.io 공식 문서](https://socket.io/get-started/private-messaging-part-1/) 참고해서 클라이언트 구조 개선하기
-* socket.io와 관련되어서 백엔드 로직 수정하기
+- 클라이언트 socket 클라이언트를 Context로 분리하기
+- [socket.io 공식 문서](https://socket.io/get-started/private-messaging-part-1/) 참고해서 클라이언트 구조 개선하기
+- socket.io와 관련되어서 백엔드 로직 수정하기
 
 긴 글 읽어주셔서 감사합니다.
 

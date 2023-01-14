@@ -4,8 +4,9 @@ description: NextJS와 socket.io를 사용해서 로그인이 가능한 채팅 �
 date: 2022-02-27 21:59:30
 tags:
 categories:
-- 만들기
-- Socket.io로 채팅 서비스 만들어보기
+  - 만들기
+  - Socket.io로 채팅 서비스 만들어보기
+hidden: true
 ---
 
 # 새로운 시작
@@ -14,15 +15,13 @@ categories:
 
 이렇게 된 김에 열심히 끝까지 만들어서 완성까지 달려보도록 하겠습니다.
 
-
-
 # 지난 시간 돌아보기 + 목표 설정하기
 
 지난 시간에는 socket.io를 사용해서 사용자가 서비스에 접속하고 채팅을 보내면 다른 사용자에게 채팅을 보여주는 기능을 구현했습니다.
 
 이번에는 사용자 계정을 만들고, 채팅방을 생성하는 기능까지 구현해보고자 합니다.
 
-이 과정에서 사용자 인증이나 
+이 과정에서 사용자 인증이나
 
 ### 채팅 기능
 
@@ -38,8 +37,6 @@ categories:
 
 - [ ] 유저 목록을 확인해서 채팅을 생성할 수 있음
 
-
-
 # 데이터베이스 구조 만들기
 
 새로운 날이 밝았고, 일어나자마자 저는 이 서비스에서 사용될 데이터베이스의 다이어그램을 그렸습니다.
@@ -48,17 +45,17 @@ categories:
 
 테이블은 5개로 나뉘어져 있습니다.
 
-* `user` : 로그인과 관련된 정보
+- `user` : 로그인과 관련된 정보
 
-* `profile` : 프로필과 연관된 정보
+- `profile` : 프로필과 연관된 정보
 
   `profile` 테이블과 `user` 테이블을 나눈 이유는 각 테이블이 하는 기능(꾸미는 기능, 로그인 기능)이 다르고, 로그인 정보를 수정하는 횟수보다 유저의 이름이나 프로필 사진을 바꾸는 횟수가 더 많을 것이라 예상했기 때문입니다.
 
-* `room` : 채팅방에 대한 정보
+- `room` : 채팅방에 대한 정보
 
-* `room_peoples` : 채팅방에 참여한 사람들의 정보
+- `room_peoples` : 채팅방에 참여한 사람들의 정보
 
-* `chat` : 사람들이 보낸 채팅에 대한 정보
+- `chat` : 사람들이 보낸 채팅에 대한 정보
 
 # ORM 모델 만들기
 
@@ -215,16 +212,15 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
     return res.status(405).end();
   }
 };
-
 ```
 
 ## 채팅방에 채팅을 보내는 기능 추가하기 (`POST /chat/[room_id]`)
 
 기존의 `POST /chat`와 동작은 동일하지만 조금 다른 기능들이 있습니다.
 
-* `[room_id]` 쿼리로 특정 채팅방에만 채팅을 보낼 수 있음
-* 사용자가 채팅을 보낼 때 채팅방에 접속함
-* 채팅을 보낸 기록이 DB에 저장됨
+- `[room_id]` 쿼리로 특정 채팅방에만 채팅을 보낼 수 있음
+- 사용자가 채팅을 보낼 때 채팅방에 접속함
+- 채팅을 보낸 기록이 DB에 저장됨
 
 ```typescript
 import { NextApiRequest } from "next";
@@ -265,23 +261,22 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 
   res.status(201).json(body);
 };
-
 ```
 
 API에 요청을 보내면...
 
 ```typescript
 axios({
-	"method": "POST",
-	"url": "http://localhost:3000/api/chat/344b5203-2fb8-4ab6-a504-66d8b2ab3346",
-	"headers": {
-		"Content-Type": "application/json; charset=utf-8"
-	},
-	"data": {
-		"user_id": "694bedd3-8776-40fe-be5a-584d1021ebae",
-		"msg": "hello world"
-	}
-})
+  method: "POST",
+  url: "http://localhost:3000/api/chat/344b5203-2fb8-4ab6-a504-66d8b2ab3346",
+  headers: {
+    "Content-Type": "application/json; charset=utf-8",
+  },
+  data: {
+    user_id: "694bedd3-8776-40fe-be5a-584d1021ebae",
+    msg: "hello world",
+  },
+});
 ```
 
 정상적으로 데이터베이스에 입력되는것을 확인할 수 있습니다.
@@ -319,13 +314,13 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 
 ```json
 [
-	{
-		"createdAt": "2022-02-28T10:01:52.636Z",
-		"id": "6fecb00d-f9b9-43ce-9eab-aae1b8cfb52f",
-		"message": "hello world",
-		"room_id": "344b5203-2fb8-4ab6-a504-66d8b2ab3346",
-		"user_id": "694bedd3-8776-40fe-be5a-584d1021ebae"
-	},
+  {
+    "createdAt": "2022-02-28T10:01:52.636Z",
+    "id": "6fecb00d-f9b9-43ce-9eab-aae1b8cfb52f",
+    "message": "hello world",
+    "room_id": "344b5203-2fb8-4ab6-a504-66d8b2ab3346",
+    "user_id": "694bedd3-8776-40fe-be5a-584d1021ebae"
+  }
 ]
 ```
 
@@ -360,11 +355,18 @@ const Home: NextPage = () => {
         <title>Socket.io connect example</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}>
-        <button onClick={handleRoomCreate} className={"px-4 py-2 bg-gray-200 rounded-md"}>
+      <main
+        className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}
+      >
+        <button
+          onClick={handleRoomCreate}
+          className={"px-4 py-2 bg-gray-200 rounded-md"}
+        >
           채팅방 생성하기
         </button>
-        <div className={"px-4 py-2 border-2 rounded-md"}>최근 생성된 채팅방 ID : {roomId}</div>
+        <div className={"px-4 py-2 border-2 rounded-md"}>
+          최근 생성된 채팅방 ID : {roomId}
+        </div>
         <form onSubmit={handleRoomJoin} className={"flex gap-2"}>
           <input
             ref={inputRef}
@@ -373,7 +375,9 @@ const Home: NextPage = () => {
             name={"room_id"}
             placeholder={"채팅방 ID"}
           />
-          <button className={"px-4 py-2 bg-gray-200 rounded-md"}>이 채팅방에 접속하기</button>
+          <button className={"px-4 py-2 bg-gray-200 rounded-md"}>
+            이 채팅방에 접속하기
+          </button>
         </form>
       </main>
     </>
@@ -381,7 +385,6 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
 ```
 
 그러면 이런 단순한 디자인의 메인 페이지가 만들어집니다.
@@ -394,8 +397,8 @@ export default Home;
 
 이 페이지에서는 이런 기능들이 있어야 하는데...
 
-* 버튼을 누르면 새로운 방을 생성하는 기능
-* 방의 ID를 form에 입력하면 해당 방으로 이동하는 기능
+- 버튼을 누르면 새로운 방을 생성하는 기능
+- 방의 ID를 form에 입력하면 해당 방으로 이동하는 기능
 
 하나씩 만들어봅시다.
 
@@ -443,9 +446,9 @@ async function handleRoomJoin(event: FormEvent<HTMLFormElement>) {
 
 이제 채팅 페이지에 기능들을 추가하거나 변경해보겠습니다.
 
-* 페이지에 접속했을 때 기존에 채팅 기록이 있으면 기존 채팅 내역을 SSR(서버사이드렌더링)으로 표시
-* 변경된 메시지 스팩에 맞게 typescript 인터페이스 수정하기
-* 다른 사용자가 채팅을 보내면 해당 채팅방에만 표시되어야 함
+- 페이지에 접속했을 때 기존에 채팅 기록이 있으면 기존 채팅 내역을 SSR(서버사이드렌더링)으로 표시
+- 변경된 메시지 스팩에 맞게 typescript 인터페이스 수정하기
+- 다른 사용자가 채팅을 보내면 해당 채팅방에만 표시되어야 함
 
 ### 페이지에 접속했을 때 기존의 채팅 기록 표시하기
 
@@ -476,11 +479,11 @@ export const getServerSideProps: GetServerSideProps<IProps> = async (ctx) => {
 // NextJS Page...
 const Home: NextPage<IProps> = ({ room_id, msg }) => {
   // useEffect...
-  
+
   const [chat, setChat] = useState<IMsg[]>(msg);
-  
+
   // NextJS Page...
-}
+};
 ```
 
 ### 변경된 메시지 스팩에 맞게 인터페이스 수정하기
@@ -552,7 +555,9 @@ const Home: NextPage<IProps> = ({ msg }) => {
                 </div>
               ))
             ) : (
-              <div className={"text-center text-gray-600 text-xl"}>채팅 기록이 없습니다.</div>
+              <div className={"text-center text-gray-600 text-xl"}>
+                채팅 기록이 없습니다.
+              </div>
             )}
           </div>
         </div>
@@ -582,7 +587,7 @@ chat.map((chat) => (
     : {chat.message}
     <span className={"ml-4 text-sm text-gray-300"}>{chat.createdAt}</span>
   </div>
-))
+));
 ```
 
 ![채팅의 타임스탬프가 정상적으로 표시되는 모습](create-chat-app-with-nextjs-socketio-prisma-day-2/content_timestamp.png)
@@ -602,7 +607,7 @@ const message = {
 await fetch(`/api/chat/${room_id}`, {
   method: "POST",
   headers: {
-  "Content-Type": "application/json",
+    "Content-Type": "application/json",
   },
   body: JSON.stringify(message),
 });
@@ -618,8 +623,8 @@ await fetch(`/api/chat/${room_id}`, {
 
 우선 이슈 사항들을 잘게 나눠보도록 하겠습니다.
 
-* 새로 보낸 채팅에 key가 중복되어 생성되는 문제 : 왜 `chat.id`는 `undefined` 일까
-* 접속하지 않은 다른 방에도 채팅이 표시되는 문제
+- 새로 보낸 채팅에 key가 중복되어 생성되는 문제 : 왜 `chat.id`는 `undefined` 일까
+- 접속하지 않은 다른 방에도 채팅이 표시되는 문제
 
 ## key가 중복되는 문제 왜 `chat.id`는 undefined일까?
 
@@ -689,7 +694,6 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 
   res.status(201).json(data);
 };
-
 ```
 
 데이터베이스에 값을 insert 하고 나온 데이터를 socket.io에 emit 하도록 API의 구조를 변경함으로써 문제를 해결했습니다.
@@ -702,7 +706,7 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 
 채팅방이 다르면 메시지가 보내지지 않아야 하는데 보내지고 있습니다.
 
-코드를 다시 살펴봅시다. 
+코드를 다시 살펴봅시다.
 
 ```typescript
 res.socket?.server?.io?.socketsJoin(room_id);
@@ -713,7 +717,7 @@ res?.socket?.server?.io?.to(room_id)?.emit("message", data);
 
 `res.socket.server.io` 는 socket.io 서버에 붙은 모든 클라이언트를 지칭하고 있는데, 여기에 `socketsJoin` 을 실행해서 모든 사람에게 채팅방을 접속시켜 생긴 문제였습니다.
 
-이것을 해결하기 위해서 채팅방에 참여하는 로직과 채팅을 보내는 로직을 분리시켰고, 사용자는 이제 채팅 페이지에 접속할 때 `GET /room/[room_id]`를 호출하여 채팅방의  join / leave 이벤트를 관리합니다.
+이것을 해결하기 위해서 채팅방에 참여하는 로직과 채팅을 보내는 로직을 분리시켰고, 사용자는 이제 채팅 페이지에 접속할 때 `GET /room/[room_id]`를 호출하여 채팅방의 join / leave 이벤트를 관리합니다.
 
 ```typescript
 import { NextApiRequest } from "next";
@@ -746,10 +750,8 @@ export default async (req: NextApiRequest, res: NextApiResponseServerIO) => {
 };
 ```
 
-* 채팅방을 만들때와 채팅을 보낼 때 `socketsJoin` 을 사용하여 채팅방에 접속시키는 로직들도 이 단계에서 제거했습니다.
-* 채팅방에서 보내진 채팅을 가져오는 로직은 `GET /room/[room_id]/chat`로 이동시켰습니다.
-
-
+- 채팅방을 만들때와 채팅을 보낼 때 `socketsJoin` 을 사용하여 채팅방에 접속시키는 로직들도 이 단계에서 제거했습니다.
+- 채팅방에서 보내진 채팅을 가져오는 로직은 `GET /room/[room_id]/chat`로 이동시켰습니다.
 
 # 회고
 

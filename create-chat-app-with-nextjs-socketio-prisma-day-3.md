@@ -4,11 +4,10 @@ description: NextJS와 socket.io를 사용해서 로그인이 가능한 채팅 �
 date: 2022-03-03 03:18:24
 tags:
 categories:
-- 만들기
-- Socket.io로 채팅 서비스 만들어보기
+  - 만들기
+  - Socket.io로 채팅 서비스 만들어보기
+hidden: true
 ---
-
-
 
 # 지난 시간 돌아보기 + 목표 설정하기
 
@@ -32,8 +31,6 @@ categories:
 ### 기타 기능
 
 - [ ] 유저 목록을 확인해서 채팅을 생성할 수 있음
-
-
 
 # 유저의 정보를 담는 Context 만들기
 
@@ -99,8 +96,6 @@ const UserContextProvider: FC = ({ children }) => {
 export default UserContextProvider;
 ```
 
-
-
 매번 `useContext(UserContext)`를 매번 import 하지 않도록 템플릿 함수인 `useUserContext` Hook도 만들어줍니다.
 
 ```typescript
@@ -109,8 +104,6 @@ import { UserContext } from "context/userContext";
 
 export const useUserContext = () => useContext(UserContext);
 ```
-
-
 
 채팅방 페이지에 하드코딩 했었던 `user` 변수도 userContext의 값을 따르도록 변경했습니다.
 
@@ -128,7 +121,7 @@ const Home: NextPage<IProps> = ({ room_id, msg }) => {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     // ...
-    
+
     const message = {
       user_id: userId,
       message: input.value,
@@ -146,15 +139,21 @@ const Home: NextPage<IProps> = ({ room_id, msg }) => {
             {chat.length ? (
               chat.map((chat) => (
                 <div key={`msg_${chat.id}`} className={"mb-1"}>
-                  <span className={chat.user_id === userId ? "text-red-500" : ""}>
+                  <span
+                    className={chat.user_id === userId ? "text-red-500" : ""}
+                  >
                     {chat.user_id === userId ? "Me" : chat.user_id.slice(0, 8)}
                   </span>
                   : {chat.message}
-                  <span className={"ml-4 text-sm text-gray-300"}>{chat.createdAt}</span>
+                  <span className={"ml-4 text-sm text-gray-300"}>
+                    {chat.createdAt}
+                  </span>
                 </div>
               ))
             ) : (
-              <div className={"text-center text-gray-600 text-xl"}>채팅 기록이 없습니다.</div>
+              <div className={"text-center text-gray-600 text-xl"}>
+                채팅 기록이 없습니다.
+              </div>
             )}
           </div>
         </div>
@@ -167,15 +166,11 @@ const Home: NextPage<IProps> = ({ room_id, msg }) => {
 export default Home;
 ```
 
-
-
 # 로그인 & 로그아웃 기능 만들기
 
 이메일을 기반으로 한 로그인 / 로그아웃 기능을 만들어보고자 합니다.
 
-
-
-## `POST /user/login`  만들기
+## `POST /user/login` 만들기
 
 사용자가 이메일과 비밀번호를 제시하면 유저 정보를 찾아서 반환하는 API를 만들었습니다.
 
@@ -208,8 +203,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 ```
-
-
 
 ## `UserContext` 구조 변경하기
 
@@ -249,8 +242,6 @@ const UserContextProvider: FC = ({ children }) => {
 
 export default UserContextProvider;
 ```
-
-
 
 ## 로그인 페이지를 추가하기
 
@@ -294,13 +285,31 @@ const Login: NextPage = () => {
 
   return (
     <main>
-      <form className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"} onSubmit={handleSubmit}>
+      <form
+        className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}
+        onSubmit={handleSubmit}
+      >
         <Link href={"/"}>
-          <a className={"bg-gray-200 py-2 px-4 rounded-md text-center"}>메인페이지로 돌아가기</a>
+          <a className={"bg-gray-200 py-2 px-4 rounded-md text-center"}>
+            메인페이지로 돌아가기
+          </a>
         </Link>
-        <input className={"border-2 py-2 px-4 rounded-md"} type="email" name="email" placeholder={"email"} />
-        <input className={"border-2 py-2 px-4 rounded-md"} type="password" name="password" placeholder={"password"} />
-        <button type="submit" className={"bg-gray-200 px-4 py-2 rounded-md text-center"}>
+        <input
+          className={"border-2 py-2 px-4 rounded-md"}
+          type="email"
+          name="email"
+          placeholder={"email"}
+        />
+        <input
+          className={"border-2 py-2 px-4 rounded-md"}
+          type="password"
+          name="password"
+          placeholder={"password"}
+        />
+        <button
+          type="submit"
+          className={"bg-gray-200 px-4 py-2 rounded-md text-center"}
+        >
           로그인
         </button>
       </form>
@@ -310,8 +319,6 @@ const Login: NextPage = () => {
 
 export default Login;
 ```
-
-
 
 그리고 메인페이지에 로그인 페이지로 가는 링크를 추가했습니다.
 
@@ -325,9 +332,13 @@ const Home: NextPage = () => {
   return (
     <>
       {/* ... */}
-      <main className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}>
+      <main
+        className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}
+      >
         <Link href={"/login"}>
-          <a className={"px-4 py-2 bg-gray-200 rounded-md text-center"}>로그인하기</a>
+          <a className={"px-4 py-2 bg-gray-200 rounded-md text-center"}>
+            로그인하기
+          </a>
         </Link>
         {/* ... */}
       </main>
@@ -337,8 +348,6 @@ const Home: NextPage = () => {
 
 export default Home;
 ```
-
-
 
 ## 로그인시 사용자 아이디를 표시하기
 
@@ -355,17 +364,26 @@ const Home: NextPage = () => {
   return (
     <>
       {/* ... */}
-      <main className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}>
+      <main
+        className={"flex flex-col gap-y-2 p-4 w-full h-screen border-gray-200"}
+      >
         {!!userId ? (
           <>
-            <span className={"px-4 py-2"}>{userId.slice(0, 8)}으로 로그인 되었습니다.</span>
-            <button onClick={logout} className={"px-4 py-2 bg-gray-200 rounded-md"}>
+            <span className={"px-4 py-2"}>
+              {userId.slice(0, 8)}으로 로그인 되었습니다.
+            </span>
+            <button
+              onClick={logout}
+              className={"px-4 py-2 bg-gray-200 rounded-md"}
+            >
               로그아웃하기
             </button>
           </>
         ) : (
           <Link href={"/login"}>
-            <a className={"px-4 py-2 bg-gray-200 rounded-md text-center"}>로그인하기</a>
+            <a className={"px-4 py-2 bg-gray-200 rounded-md text-center"}>
+              로그인하기
+            </a>
           </Link>
         )}
         {/* ... */}
@@ -380,8 +398,6 @@ export default Home;
 ![유저가 로그인 했을 때, 어떤 유저로 로그인 되었는지와 로그아웃 하기 버튼이 보인다.](create-chat-app-with-nextjs-socketio-prisma-day-3/logined.png)
 
 ![유저가 로그아웃 했을 때, 로그인하기 버튼만 보인다.](create-chat-app-with-nextjs-socketio-prisma-day-3/notlogined.png)
-
-
 
 ## 완성!
 
@@ -436,8 +452,6 @@ $ yarn prisma db push
 # ✔ Generated Prisma Client (3.10.0 | library) to ./node_modules/@prisma/client in 49ms
 ```
 
-
-
 ## 백엔드 구조 변경하기
 
 프로필 기능이 추가되면서, 계정을 생성할 때 프로필도 같이 만들도록 기능을 추가했습니다.
@@ -465,10 +479,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).end();
   }
 };
-
 ```
-
-
 
 ## 메인 프로필을 찾는 기능을 추가하기
 
@@ -481,17 +492,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 model Profile {
   // ...
-  
+
   isDefault Boolean  @default(false)
-  
+
   // ...
 }
 
 
 // ...
 ```
-
-
 
 ### `POST /user/profile` 작업하기
 
@@ -539,12 +548,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).end();
   }
 };
-
 ```
 
-
-
-### `GET /user/profile`  작업하기
+### `GET /user/profile` 작업하기
 
 프로필 관리를 위해 사용자의 프로필을 가져오는 기능을 작업했습니다.
 
@@ -570,8 +576,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 };
 ```
 
-
-
 ## `Profile` 타입 추가하기
 
 ```typescript
@@ -584,8 +588,6 @@ export type Profile = {
   createdAt: string;
 };
 ```
-
-
 
 ## Prisma transaction에서 'All elements of the array need to be Prisma Client promises' 가 뜨는거 해결하기
 
@@ -615,7 +617,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           data: {
             isDefault: false,
           },
-        }),
+        })
       );
     }
 
@@ -631,22 +633,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
         },
-      }),
+      })
     );
 
     await prisma.$transaction(transaction);
 
     res.status(201).end();
   }
-  
+
   // ...
 };
-
 ```
-
-
-
-
 
 ## Profile 페이지 만들기
 
@@ -661,10 +658,15 @@ import { useUserContext } from "hooks/useUserContext";
 import { FormEvent, useEffect, useState } from "react";
 import { Profile } from "types/profile";
 
-function fetchUserProfile(userId: string, setProfiles: (data: Profile[]) => void) {
-  fetch(`http://localhost:3000/api/user/profile?user_id=${userId}`).then((response) => {
-    response.json().then((data) => setProfiles(data));
-  });
+function fetchUserProfile(
+  userId: string,
+  setProfiles: (data: Profile[]) => void
+) {
+  fetch(`http://localhost:3000/api/user/profile?user_id=${userId}`).then(
+    (response) => {
+      response.json().then((data) => setProfiles(data));
+    }
+  );
 }
 
 const Profile: NextPage = () => {
@@ -697,14 +699,28 @@ const Profile: NextPage = () => {
   }
 
   return (
-    <main className={"flex flex-col gap-y-4 p-4 w-full h-screen border-gray-200"}>
+    <main
+      className={"flex flex-col gap-y-4 p-4 w-full h-screen border-gray-200"}
+    >
       <Link href={"/"}>
-        <a className={"bg-gray-200 py-2 px-4 rounded-md text-center"}>메인페이지로 돌아가기</a>
+        <a className={"bg-gray-200 py-2 px-4 rounded-md text-center"}>
+          메인페이지로 돌아가기
+        </a>
       </Link>
 
       <form onSubmit={handleSubmit} className={"flex flex-col gap-y-2"}>
-        <input className={"border-2 rounded-md px-4 py-2"} type="text" name="username" placeholder={"username"} />
-        <input className={"border-2 rounded-md px-4 py-2"} type="text" name="thumbnail" placeholder={"thumbnail url"} />
+        <input
+          className={"border-2 rounded-md px-4 py-2"}
+          type="text"
+          name="username"
+          placeholder={"username"}
+        />
+        <input
+          className={"border-2 rounded-md px-4 py-2"}
+          type="text"
+          name="thumbnail"
+          placeholder={"thumbnail url"}
+        />
         <label className={"flex gap-x-2 border-2 rounded-md px-4 py-2"}>
           <input type="checkbox" name="isDefault" />
           <span>default profile</span>
@@ -734,15 +750,13 @@ export default Profile;
 
 # 회고 그리고 다음편 내용 예상하기
 
-* 오늘은 socket.io 대신 데이터베이스와 관련된 부분을 작업해서 그런지 크게 어려운 부분 없이 부드럽게 넘어간 것 같습니다.
-* 이제서야 알아낸 사실인데 마크다운 코드블럭에는 tsx 확장자가 있었더라고요. 이제 jsx에서도 타입이 이쁘게 출력될 수 있습니다.
-* 그리고 메인 프로필의 `isDefault` 컬럼 명을 고민할 때 명쾌한 해답을 주신 문계피씨에게 감사하다는 인사도 드립니다. 고마워용
-
-
+- 오늘은 socket.io 대신 데이터베이스와 관련된 부분을 작업해서 그런지 크게 어려운 부분 없이 부드럽게 넘어간 것 같습니다.
+- 이제서야 알아낸 사실인데 마크다운 코드블럭에는 tsx 확장자가 있었더라고요. 이제 jsx에서도 타입이 이쁘게 출력될 수 있습니다.
+- 그리고 메인 프로필의 `isDefault` 컬럼 명을 고민할 때 명쾌한 해답을 주신 문계피씨에게 감사하다는 인사도 드립니다. 고마워용
 
 다음 편에서는 아마 이런 기능들을 작업할까 합니다.
 
-* 유저 세션을 쿠키로 관리하는 기능
-* socket을 관리하는 context 만들기
-* 내가 접속한 채팅방을 표시하는 기능
-* 유저의 ID를 입력해서 채팅방에 초대하는 기능
+- 유저 세션을 쿠키로 관리하는 기능
+- socket을 관리하는 context 만들기
+- 내가 접속한 채팅방을 표시하는 기능
+- 유저의 ID를 입력해서 채팅방에 초대하는 기능
