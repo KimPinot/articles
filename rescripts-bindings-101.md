@@ -2,6 +2,8 @@
 title: ReScript 바인딩 101
 description: ReScript의 함수 / 모듈 바인딩을 알아봅시다
 date: 2023-1-15 03:41:00
+categories:
+  - 개발에 도움이 되는 글
 ---
 
 이번시간에는 ReScript 바인딩에 대해서 알아보도록 하겠습니다.
@@ -28,7 +30,7 @@ ReScript 바인딩은 ReScript로 작성되지 않은 JS/TS 코드를 ReScript�
 
 이때 사용할 수 있는 코드가 두개나 있습니다.
 
-* `@module("something")` 을 사용하여 something이란 이름의 모듈을 가져올 수 있습니다.
+- `@module("something")` 을 사용하여 something이란 이름의 모듈을 가져올 수 있습니다.
 
 ```typescript
 @module("something") external something: unit => string = "default"

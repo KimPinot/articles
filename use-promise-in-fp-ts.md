@@ -7,7 +7,7 @@ tags:
   - 함수형 프로그래밍
   - promise
 categories:
-  - how-to
+  - 개발에 도움이 되는 글
 ---
 
 안녕하세요. 나비입니다.
@@ -147,10 +147,10 @@ const validateName = E.fromPredicate(
 
 ```typescript
 // if valid name
-console.log(validateName("johnDo")) // => { _tag: 'Right', right: "johnDo1" }
+console.log(validateName("johnDo")); // => { _tag: 'Right', right: "johnDo1" }
 
 // if not valid name
-console.log(validateName("john Do")) // => { _tag: 'Left', left: '"john Do" is not a valid name!' }
+console.log(validateName("john Do")); // => { _tag: 'Left', left: '"john Do" is not a valid name!' }
 ```
 
 이것을 알고 있으면 `TaskEither` 를 쉽게 이해할 수 있습니다.
@@ -161,35 +161,32 @@ console.log(validateName("john Do")) // => { _tag: 'Left', left: '"john Do" is n
 
 ```typescript
 async function throws50percent() {
-  if (Math.abs(Math.random() * 2) >= 1)
-    throw new Error(":(")
-  
-  return ":)"
+  if (Math.abs(Math.random() * 2) >= 1) throw new Error(":(");
+
+  return ":)";
 }
 ```
 
 이때 `TE.tryCatch` 라는 함수를 이용해 `throws50percent` 함수의 오류를 잡아보도록 하겠습니다.
 
 ```typescript
-import * as TE from "fp-ts/TaskEither"
+import * as TE from "fp-ts/TaskEither";
 
-const process = TE.tryCatch(
-  throws50percent,
-  (e) => new Error(String(e))
-);
+const process = TE.tryCatch(throws50percent, (e) => new Error(String(e)));
 
 (async () => {
   console.log(await process());
-})()
+})();
 ```
 
 만약 이 함수가 오류를 뱉지 않을 경우에는 아래 Json이 반환됩니다.
 
 ```json
-{ _tag: 'Right', right: ':)' }
+{ "_tag": "Right", "right": ":)" }
 ```
 
 오류가 발생할 경우, 아래 Json이 반환됩니다.
+
 ```json
 {
   _tag: 'Left',
@@ -221,7 +218,7 @@ const process = async () => {
   } catch (e) {
     throw new Error(`Second ${err}`);
   }
-}
+};
 ```
 
 이때 함수형에서는 `TE.chain` 함수를 사용하게 됩니다.
@@ -238,15 +235,15 @@ import * as TE from "fp-ts/TaskEither";
 const process = F.pipe(
   TE.tryCatch(
     () => throws50percent(),
-    (err) => new Error(`First ${err}`),
+    (err) => new Error(`First ${err}`)
   ),
-  TE.chain(() => 
+  TE.chain(() =>
     TE.tryCatch(
       () => throws50percent(),
-      (err) => new Error(`Second ${err}`),
-    ),
+      (err) => new Error(`Second ${err}`)
+    )
   ),
-  TE.foldW(T.of, T.of),
+  TE.foldW(T.of, T.of)
 );
 ```
 
@@ -257,10 +254,11 @@ const process = F.pipe(
 결과적으로 이 함수를 실행시키면 이런 Json 대신
 
 ```json
-{ _tag: 'Right', right: ':)' }
+{ "_tag": "Right", "right": ":)" }
 ```
 
 이런 값이 출력되게 됩니다.
+
 ```text
 :)
 ```
@@ -280,12 +278,12 @@ const process = async () => {
     try {
       await rollback();
     } catch (e) {
-      throw new Error(`Rollback Error : ${e}`)
+      throw new Error(`Rollback Error : ${e}`);
     }
     // then, throw exist error
     throw originalError;
   }
-}
+};
 ```
 
 이럴때 사용할 수 있는 함수가 바로 `TE.orElse` 입니다.

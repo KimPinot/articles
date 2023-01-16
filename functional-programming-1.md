@@ -2,25 +2,24 @@
 title: fp-ts와 Jest로 함수형 프로그래밍 해보기 (1) - 데이터 포매팅
 date: 2022-08-07 12:43:42
 description: 이 글에서는 함수형 라이브러리중 하나인 fp-ts 라는 라이브러리를 사용하여 값을 필터링하고, 정렬하는 간단한 함수형 프로그래밍을 만들어보고자 합니다. 또한 모든 로직을 테스트로 한번 더 검사함으로써 로직의 정확성도 같이 보장하고자 합니다.
-categories: [만들기]
+categories:
+  - 따라해보기
+  - 함수형
 tags:
 ---
-
-
 
 안녕하세요. 저는 개발하는 뭐시깽이인 나비라고 합니다.
 
 이번시간에는 아는 지인이 열렬하게 영업하고 사랑하는 함수형 프로그래밍을 fp-ts 라는 라이브러리로 구현해보고자 합니다.
 
-
-
 ## TL;DR
 
-* 레포지토리 : [kimpinot/functional-programming](https://github.com/kimpinot/functional-programming)
-* 사실 TDD는 필요 없습니다. **'타입이 있는데 왜 테스트를 하죠?'**
-  * 하지만 저는 로직의 순수성을 보장하기 위해 TDD를 사용했습니다.
+- 레포지토리 : [kimpinot/functional-programming](https://github.com/kimpinot/functional-programming)
+- 사실 TDD는 필요 없습니다. **'타입이 있는데 왜 테스트를 하죠?'**
 
-* 전체 코드는 아래와 같습니다.
+  - 하지만 저는 로직의 순수성을 보장하기 위해 TDD를 사용했습니다.
+
+- 전체 코드는 아래와 같습니다.
 
 ```typescript filename="all.ts"
 import { TokenMeta as Meta, TokenVisible as Visible } from "constants/database";
@@ -40,7 +39,8 @@ export type NumericMap<T> = Map<Numeric, T>;
 export type MappedVisible = NumericMap<Visible>;
 export type MappedInfo = NumericMap<Info>;
 
-export const visibleArrToMap = (visible: Visible[]) => new Map(visible.map((x) => [x.nftTokenId, x]));
+export const visibleArrToMap = (visible: Visible[]) =>
+  new Map(visible.map((x) => [x.nftTokenId, x]));
 
 export const defaultVisible = (nftTokenId: Numeric): Visible => ({
   id: "-1",
@@ -66,19 +66,26 @@ export const mergeMetaWithVisibleMap =
     pipe(m, Array.map(visibleObject(v)));
 
 const isHidden = (item: Info) => item.isHidden === "false";
-export const keepNonHidden = (items: Info[]) => pipe(items, Array.filter(isHidden));
+export const keepNonHidden = (items: Info[]) =>
+  pipe(items, Array.filter(isHidden));
 
 const sortByOrder = pipe(
   String.Ord,
   Ord.reverse,
-  Ord.contramap((item: Info) => item.order),
+  Ord.contramap((item: Info) => item.order)
 );
-export const sortItemsByItsOrder = (items: Info[]) => pipe(items, Array.sort(sortByOrder));
+export const sortItemsByItsOrder = (items: Info[]) =>
+  pipe(items, Array.sort(sortByOrder));
 
 export const all = (meta: Meta[]) => (visible: Visible[]) =>
-  pipe(visible, visibleArrToMap, mergeMetaWithVisibleMap(meta), keepNonHidden, sortItemsByItsOrder);
+  pipe(
+    visible,
+    visibleArrToMap,
+    mergeMetaWithVisibleMap(meta),
+    keepNonHidden,
+    sortItemsByItsOrder
+  );
 ```
-
 
 ## 목표 만들기
 
@@ -107,15 +114,13 @@ const B: TokenVisible[] = [];
 
 ### 조건 정의
 
-* `TokenMeta` 와 `TokenVisible` 은 공통의 속성을 가지는 `nftTokenId` 라는 값을 기준으로 합쳐져야 한다.
-* `TokenMeta` 와 `TokenVisible` 의 관계는 one-to-many 관계다.
-* 짝이 맞는 `TokenMeta` 와 `TokenVisible` 이 없을 경우가 생길 경우 다음과 같이 처리한다.
-  * `TokenMeta` 가 없는 경우 : `TokenVisible` 타입의 가상의 더미를 만든다, 이때 `order` 는 `"0"`, `isHidden`은 `"false"` 여야 한다.
-  * `TokenVisible` 이 없는 경우 : 해당 TokenVisible을 숨김처리한다.
-* 합쳐진 `TokenMeta` 와 `TokenVisible` (이하 `TokenInfo`) 는 `isHidden` 이 `"true"` 일 경우, 숨김처리 되어야 한다.
-* `TokenInfo` 는 `order` 값을 기준으로 역방향 정렬이 되어야 한다.
-
-
+- `TokenMeta` 와 `TokenVisible` 은 공통의 속성을 가지는 `nftTokenId` 라는 값을 기준으로 합쳐져야 한다.
+- `TokenMeta` 와 `TokenVisible` 의 관계는 one-to-many 관계다.
+- 짝이 맞는 `TokenMeta` 와 `TokenVisible` 이 없을 경우가 생길 경우 다음과 같이 처리한다.
+  - `TokenMeta` 가 없는 경우 : `TokenVisible` 타입의 가상의 더미를 만든다, 이때 `order` 는 `"0"`, `isHidden`은 `"false"` 여야 한다.
+  - `TokenVisible` 이 없는 경우 : 해당 TokenVisible을 숨김처리한다.
+- 합쳐진 `TokenMeta` 와 `TokenVisible` (이하 `TokenInfo`) 는 `isHidden` 이 `"true"` 일 경우, 숨김처리 되어야 한다.
+- `TokenInfo` 는 `order` 값을 기준으로 역방향 정렬이 되어야 한다.
 
 ## 테스트 코드 짜기
 
@@ -168,11 +173,7 @@ describe("merge", () => {
   });
 
   it("works with normal case", () => {
-    expect(
-      pipe()
-    ).toStrictEqual(
-      __mocked_merge_info__,
-    );
+    expect(pipe()).toStrictEqual(__mocked_merge_info__);
   });
 });
 ```
@@ -182,25 +183,35 @@ describe("merge", () => {
 ```typescript
 describe("filter", () => {
   it("should be include isHidden=false item", () => {
-    expect(filter(__mocked_token_info__).some((item) => item.isHidden === "true")).not.toBeTruthy();
-    expect(filter(__mocked_token_info__).some((item) => item.isHidden === "false")).toBeTruthy();
+    expect(
+      filter(__mocked_token_info__).some((item) => item.isHidden === "true")
+    ).not.toBeTruthy();
+    expect(
+      filter(__mocked_token_info__).some((item) => item.isHidden === "false")
+    ).toBeTruthy();
   });
 
   it("should be exclude isHidden=true item", () => {
-    expect(filter(__mocked_token_info__).some((item) => item.isHidden === "false")).toBeTruthy();
-    expect(filter(__mocked_token_info__).some((item) => item.isHidden === "true")).not.toBeTruthy();
+    expect(
+      filter(__mocked_token_info__).some((item) => item.isHidden === "false")
+    ).toBeTruthy();
+    expect(
+      filter(__mocked_token_info__).some((item) => item.isHidden === "true")
+    ).not.toBeTruthy();
   });
 });
 ```
 
-* isHidden이 false 인 코드만 있는지 확인합니다
-* isHidden이 true 인 코드만 있는지 확인합니다.
+- isHidden이 false 인 코드만 있는지 확인합니다
+- isHidden이 true 인 코드만 있는지 확인합니다.
 
 이 글을 쓰면서 다시 생각하는건데, true 또는 false 이외의 값이 들어간 케이스도 더 들어갔으면 좋았을거 같네요.
 
 ```typescript
 it("should be exclude invalid isHidden value", () => {
-  expect(filter(__mocked_token_info__).some((item) => item.isHidden !== "true")).not.toBeTruthy();
+  expect(
+    filter(__mocked_token_info__).some((item) => item.isHidden !== "true")
+  ).not.toBeTruthy();
 });
 ```
 
@@ -218,8 +229,8 @@ describe("sort", () => {
 });
 ```
 
-* 정렬을 마치면 첫번째 아이템의 order는 30이 될것이고 (최고값) 이 값을 찾습니다.
-* 마지막 아이템의 order는 0이여야 합니다.
+- 정렬을 마치면 첫번째 아이템의 order는 30이 될것이고 (최고값) 이 값을 찾습니다.
+- 마지막 아이템의 order는 0이여야 합니다.
 
 이 부분도 글 쓰면서 다시 보니까 하드코드된 부분이 많아서 테스트케이스가 추가되었을 때 테스트가 망가질 위험이 있어보입니다. 이렇게 수정해보겠습니다.
 
@@ -229,7 +240,7 @@ describe("sort", () => {
     // 가장 높은 order 값을 반환하는 함수
     const highestOrder = __mocked_token_info__.reduce(
       (prev, cur) => (Number(prev) < Number(cur.order) ? cur.order : prev),
-      "0",
+      "0"
     );
     // 첫번째 아이템은 가장 높은 Order 값을 가져야 한다
     expect(sort(__mocked_token_info__)[0].order).toBe(highestOrder);
@@ -239,7 +250,7 @@ describe("sort", () => {
     // 가장 낮은 order 값을 반환하는 함수
     const lowestOrder = __mocked_token_info__.reduce(
       (prev, cur) => (Number(prev) > Number(cur.order) ? cur.order : prev),
-      "0",
+      "0"
     );
     const sorted = sort(__mocked_token_info__);
     // 마지막 아이템의 order 값은 가장 낮아야 한다
@@ -247,8 +258,6 @@ describe("sort", () => {
   });
 });
 ```
-
-
 
 ## 함수형으로 코드짜기
 
@@ -258,7 +267,11 @@ describe("sort", () => {
 import { pipe } from "fp-ts/lib/function";
 import { map } from "fp-ts/lib/Array";
 
-export const visibleArrToMap = (visible: Visible[]) => visible.reduce((map, cur) => map.set(cur.nftTokenId, cur), new Map() as MappedVisible);
+export const visibleArrToMap = (visible: Visible[]) =>
+  visible.reduce(
+    (map, cur) => map.set(cur.nftTokenId, cur),
+    new Map() as MappedVisible
+  );
 
 const defaultVisible = (nftTokenId: Numeric): Visible => ({
   id: "-1",
@@ -267,7 +280,8 @@ const defaultVisible = (nftTokenId: Numeric): Visible => ({
   isHidden: "false",
 });
 
-const getVisible = (v: MappedVisible) => (nftId: Numeric) => v.get(nftId) || defaultVisible(nftId);
+const getVisible = (v: MappedVisible) => (nftId: Numeric) =>
+  v.get(nftId) || defaultVisible(nftId);
 
 const generateVisible =
   (v: MappedVisible) =>
@@ -294,8 +308,10 @@ export const merge =
 ### Sort & Filter
 
 ```typescript
-export const sort = (items: Info[]) => items.sort((prev, next) => Number(next.order) - Number(prev.order));
-export const filter = (items: Info[]) => items.filter((item) => item.isHidden === "false");
+export const sort = (items: Info[]) =>
+  items.sort((prev, next) => Number(next.order) - Number(prev.order));
+export const filter = (items: Info[]) =>
+  items.filter((item) => item.isHidden === "false");
 ```
 
 사실 이 코드까지는 도저히 함수형으로 어떻게 만들어야 할지 몰라서 일단은 슈퍼짱안함수형 타입의 코드로 작성했습니다.
@@ -307,14 +323,13 @@ export const filter = (items: Info[]) => items.filter((item) => item.isHidden ==
 ```typescript
 import { pipe } from "fp-ts/lib/function";
 
-export const all = (meta: Meta[]) => (visible: Visible[]) => pipe(visible, visibleArrToMap, merge(meta), filter, sort);
+export const all = (meta: Meta[]) => (visible: Visible[]) =>
+  pipe(visible, visibleArrToMap, merge(meta), filter, sort);
 ```
 
 이 슈퍼짱함수는 엄청 간단한데, 그냥 지금까지 있는 기능들을 하나로 디지몬 합!체 한다는 느낌입니다.
 
 그래서 그 무엇보다 엄청 간단하죠 짱
-
-
 
 ## 리팩토링하기
 
@@ -333,7 +348,7 @@ import { contramap, reverse } from "fp-ts/lib/Ord";
 const sortByOrder = pipe(
   Ord,
   contramap((item: Info) => item.order),
-  reverse,
+  reverse
 );
 export const sort = (items: Info[]) => pipe(items, _sort(sortByOrder));
 ```
@@ -348,7 +363,7 @@ export const sort = (items: Info[]) => pipe(items, _sort(sortByOrder));
 
 ```text
 정렬((item) => item.order 의 값을)(String 정렬)
-위 값을 뒤집기 
+위 값을 뒤집기
 ```
 
 `contramap` 을 정렬로, `Ord` 를 String 정렬로, `reverse` 를 뒤집기로 치환하면 제가 작성한 코드가 됩니다.
@@ -368,8 +383,6 @@ export const filter = (items: Info[]) => pipe(items, _filter(isHidden));
 진짜 이게 끝이에요. true 또는 false를 반환하는 함수를 인자로 쥐어주면 빠르게 코드를 작성할 수 있다니...
 
 솔직히 이거를 본 순간 '아 함수형이 좀 짱이네...ㅎ' 라는 생각을 하게 되었습니다.
-
-
 
 ## PR로 받은 리팩토링 적용하기
 
@@ -409,19 +422,22 @@ export const mergeMetaWithVisibleMap =
 
 ```typescript
 // export const filter = (items: Info[]) => pipe(items, _filter(isHidden));
-export const keepNonHidden = (items: Info[]) => pipe(items, Array.filter(isHidden));
+export const keepNonHidden = (items: Info[]) =>
+  pipe(items, Array.filter(isHidden));
 ```
 
 ```typescript
 // export const sort = (items: Info[]) => pipe(items, _sort(sortByOrder));
-export const sortItemsByItsOrder = (items: Info[]) => pipe(items, Array.sort(sortByOrder));
+export const sortItemsByItsOrder = (items: Info[]) =>
+  pipe(items, Array.sort(sortByOrder));
 ```
 
 ### Map을 만들때에는 그냥 배열을 넣자
 
 ```typescript
 // export const visibleArrToMap = (visible: Visible[]) => visible.reduce((map, cur) => map.set(cur.nftTokenId, cur), new Map() as MappedVisible);
-export const visibleArrToMap = (visible: Visible[]) => new Map(visible.map((x) => [x.nftTokenId, x]));
+export const visibleArrToMap = (visible: Visible[]) =>
+  new Map(visible.map((x) => [x.nftTokenId, x]));
 ```
 
 세상에나 이렇게 쓸수 있던 코드를 왜 저는 저렇게 썼던걸까요? 코드를 썼던 그때의 저는 사라졌으니 앞으로는 Map 객체를 만들때에는 인자로 배열을 넣어야 한다 라고 지금의 저에게 가르쳐야할것 같습니다.
@@ -430,7 +446,8 @@ export const visibleArrToMap = (visible: Visible[]) => new Map(visible.map((x) =
 
 ```typescript
 // export const visibleFromMap = (v: MappedVisible) => (nftId: Numeric) => v.get(nftId) || defaultVisible(nftId);
-export const visibleFromMap = (v: MappedVisible) => (nftId: Numeric) => pipe(v.get(nftId), Option.fromNullable);
+export const visibleFromMap = (v: MappedVisible) => (nftId: Numeric) =>
+  pipe(v.get(nftId), Option.fromNullable);
 
 // export const visibleObject =
 //  (v: MappedVisible) =>
@@ -442,14 +459,16 @@ export const visibleFromMap = (v: MappedVisible) => (nftId: Numeric) => pipe(v.g
 export const visibleObject =
   (v: MappedVisible) =>
   (m: Meta): Info =>
-    pipe(visibleFromMap(v)(m.nftTokenId), Option.getOrElse(defaultVisible(m.nftTokenId)), makeToken(m.id)(m));
+    pipe(
+      visibleFromMap(v)(m.nftTokenId),
+      Option.getOrElse(defaultVisible(m.nftTokenId)),
+      makeToken(m.id)(m)
+    );
 ```
 
 `Object.fromNullable` 함수는 반환되는 함수가 null 이거나 undefined 일 경우 None을 반환하는 함수인데요.
 
 `visibleObject` 함수에 `Object.fromNullable ` 를 파이프로 연결함으로써 `v.get(nftId)` 에서 undefined 타입이 리턴되지 않게 만들게 되었습니다.
-
-
 
 ## 완성!
 
