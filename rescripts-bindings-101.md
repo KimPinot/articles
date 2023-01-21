@@ -2,6 +2,10 @@
 title: ReScript 바인딩 101
 description: ReScript의 함수 / 모듈 바인딩을 알아봅시다
 date: 2023-1-15 03:41:00
+tags:
+  - ReScript
+  - 함수형 프로그래밍
+  - 바인딩
 categories:
   - 개발에 도움이 되는 글
 ---

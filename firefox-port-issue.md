@@ -3,7 +3,7 @@ title: firefox에서 '이 주소는 제한되어 있음' 이라며 포트 연결
 date: 2021-01-21 11:10:00
 tags: [troubleshoot, firefox]
 categories:
-- 개발에 도움이 되는 글
+  - 개발에 도움이 되는 글
 ---
 
 [Mozilla Port Blocking](https://developer.mozilla.org/en-US/docs/Mozilla/Mozilla_Port_Blocking)
